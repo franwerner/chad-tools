@@ -1,9 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { CO, IDE_COLOR } from "../../shared/colors";
 import { useInspectMode } from "./hooks/useInspectMode";
-import { useClaudeSocket } from "../claude/hooks/useClaudeSocket";
 import { TrackerFab } from "./components/TrackerFab";
-import { PromptFab } from "../claude/components/PromptFab";
 import { InspectModal } from "./components/InspectModal";
 import { HoverOverlay } from "./components/HoverOverlay";
 import { MiniEditor } from "../editor/components/MiniEditor";
@@ -14,14 +12,10 @@ import { useActiveTool } from "../../shared/ActiveToolContext";
 export const SourceTracker: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLDivElement>(null);
-  const widgetRef = useRef<HTMLDivElement>(null);
-  const dropZoneRef = useRef<HTMLDivElement>(null);
   const { active, setActive, capture, setCapture, close } = useInspectMode(modalRef, fabRef);
   const tool = useActiveTool();
 
-  const showPrompt = tool.activeTool === "claude";
   const [picking, setPicking] = useState(false);
-  const [insertReq, setInsertReq] = useState<{ source: string } | null>(null);
   const [editorSource, setEditorSource] = useState<string | null>(null);
   const [editorPicking, setEditorPicking] = useState(false);
 
@@ -45,21 +39,7 @@ export const SourceTracker: React.FC = () => {
     setActive(false);
   }, [tool.activeTool, setActive]);
 
-  const claude = useClaudeSocket();
 
-  const togglePrompt = useCallback(() => {
-    tool.toggle("claude");
-  }, [tool]);
-
-  // Pick mode: mutually exclusive with inspect mode
-  const togglePick = useCallback(() => {
-    setPicking((v) => {
-      if (!v) setActive(false);
-      return !v;
-    });
-  }, [setActive]);
-
-  // When inspect mode activates, deactivate pick and editor pick
   const handleInspectToggle = useCallback(() => {
     setActive((a) => {
       if (!a) { setPicking(false); setEditorPicking(false); }
@@ -67,16 +47,10 @@ export const SourceTracker: React.FC = () => {
     });
   }, [setActive]);
 
-  const handleInsertConsumed = useCallback(() => {
-    setInsertReq(null);
-  }, []);
-
-  // Claude pick mode: crosshair + click element with data-source → insert into prompt
   useEffect(() => {
     if (!picking) return;
 
     const style = document.createElement("style");
-    style.setAttribute("data-claude-pick", "");
     style.textContent = "* { cursor: crosshair !important; }";
     document.head.appendChild(style);
 
@@ -98,12 +72,6 @@ export const SourceTracker: React.FC = () => {
       e.stopPropagation();
       e.stopImmediatePropagation();
 
-      const found = target.closest("[data-source]");
-      if (found) {
-        const source = found.getAttribute("data-source")!;
-        setInsertReq({ source });
-        tool.open("claude");
-      }
       setPicking(false);
     };
 
@@ -202,43 +170,10 @@ export const SourceTracker: React.FC = () => {
     setEditorSource(null);
   }, []);
 
-  // Also support adding from InspectModal "+" button
-  const addToPromptFromModal = useCallback((source: string) => {
-    setInsertReq({ source });
-    tool.open("claude");
-  }, [tool]);
 
-  // Close InspectModal: if Claude is open, just clear capture (don't re-activate inspect)
   const closeInspectModal = useCallback(() => {
-    if (showPrompt) {
-      setCapture(null);
-    } else {
-      close();
-    }
-  }, [showPrompt, setCapture, close]);
-
-  const promptWidgetProps = {
-    onClose: togglePrompt,
-    connected: claude.connected,
-    streaming: claude.streaming,
-    blocks: claude.blocks,
-    tokens: claude.tokens,
-    stats: claude.stats,
-    hasSession: claude.hasSession,
-    sessionId: claude.sessionId,
-    picking,
-    insertReq,
-    onInsertConsumed: handleInsertConsumed,
-    onSend: claude.send,
-    onAbort: claude.abort,
-    onNewSession: claude.newSession,
-    onLoadSession: claude.loadSession,
-    onApproveTool: claude.approveTool,
-    onRejectTool: claude.rejectTool,
-    onApproveAll: claude.approveAll,
-    onTogglePick: togglePick,
-    dropZoneRef,
-  };
+    close()
+  }, [setCapture, close]);
 
   return (
     <>
@@ -248,7 +183,6 @@ export const SourceTracker: React.FC = () => {
             capture={capture}
             onOpen={openSource}
             onEdit={handleEdit}
-            onAddToPrompt={addToPromptFromModal}
             onClose={closeInspectModal}
           />
         </div>
@@ -256,7 +190,6 @@ export const SourceTracker: React.FC = () => {
         <div ref={fabRef}>
           <TrackerFab active={active} onToggle={handleInspectToggle} />
           <EditorFab active={editorPicking || !!editorSource} onClick={toggleEditorPick} />
-          <PromptFab active={showPrompt} hasContext={picking} onClick={togglePrompt} />
         </div>
       )}
       {!capture && active && <HoverOverlay modalRef={modalRef} fabRef={fabRef} />}

@@ -10,10 +10,9 @@ interface Props {
   nodes: SourceNode[];
   onOpen: (source: string) => void;
   onEdit?: (source: string) => void;
-  onAddToPrompt?: (source: string) => void;
 }
 
-export const VirtualTreeView: React.FC<Props> = ({ nodes, onOpen, onEdit, onAddToPrompt }) => {
+export const VirtualTreeView: React.FC<Props> = ({ nodes, onOpen, onEdit }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
   const [viewHeight, setViewHeight] = useState(0);
@@ -69,7 +68,6 @@ export const VirtualTreeView: React.FC<Props> = ({ nodes, onOpen, onEdit, onAddT
                 depth={item.depth}
                 onOpen={onOpen}
                 onEdit={onEdit}
-                onAddToPrompt={onAddToPrompt}
               />
             </div>
           ))}

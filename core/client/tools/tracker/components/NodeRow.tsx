@@ -8,7 +8,6 @@ interface Props {
   depth: number;
   onOpen: (source: string) => void;
   onEdit?: (source: string) => void;
-  onAddToPrompt?: (source: string) => void;
   dimmed?: boolean;
   highlight?: boolean;
 }
@@ -30,11 +29,6 @@ const actionBtnBase: React.CSSProperties = {
   verticalAlign: "middle",
 };
 
-const addBtnStyle: React.CSSProperties = {
-  ...actionBtnBase,
-  border: `1px solid ${CO}60`,
-  color: CO,
-};
 
 const editBtnStyle: React.CSSProperties = {
   ...actionBtnBase,
@@ -42,7 +36,7 @@ const editBtnStyle: React.CSSProperties = {
   color: IDE_COLOR,
 };
 
-export const NodeRow: React.FC<Props> = ({ node, depth, onOpen, onEdit, onAddToPrompt, dimmed, highlight }) => {
+export const NodeRow: React.FC<Props> = ({ node, depth, onOpen, onEdit, dimmed, highlight }) => {
   const [hovered, setHovered] = useState(false);
   const [ctrlHeld, setCtrlHeld] = useState(false);
   const clickable = !!node.source;
@@ -71,8 +65,8 @@ export const NodeRow: React.FC<Props> = ({ node, depth, onOpen, onEdit, onAddToP
         background: highlight
           ? styles.rowHighlight.background
           : hovered && clickable
-          ? COLORS.hover
-          : "transparent",
+            ? COLORS.hover
+            : "transparent",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -111,18 +105,6 @@ export const NodeRow: React.FC<Props> = ({ node, depth, onOpen, onEdit, onAddToP
                     <polyline points="16 18 22 12 16 6" />
                     <polyline points="8 6 2 12 8 18" />
                   </svg>
-                </button>
-              )}
-              {onAddToPrompt && (
-                <button
-                  style={addBtnStyle}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAddToPrompt(node.source!);
-                  }}
-                  title="Add to Claude prompt"
-                >
-                  +
                 </button>
               )}
             </>

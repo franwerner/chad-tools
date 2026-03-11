@@ -9,11 +9,10 @@ interface Props {
   capture: CapturedTree;
   onOpen: (source: string) => void;
   onEdit: (source: string) => void;
-  onAddToPrompt: (source: string) => void;
   onClose: () => void;
 }
 
-export const InspectModal: React.FC<Props> = ({ capture, onOpen, onEdit, onAddToPrompt, onClose }) => {
+export const InspectModal: React.FC<Props> = ({ capture, onOpen, onEdit, onClose }) => {
   const childCount = useMemo(
     () => flattenTree(capture.clicked.children).length,
     [capture.clicked.children]
@@ -45,7 +44,7 @@ export const InspectModal: React.FC<Props> = ({ capture, onOpen, onEdit, onAddTo
             <div style={styles.section}>
               <div style={styles.label}>Parent chain</div>
               {capture.parents.map((p, i) => (
-                <NodeRow key={i} node={p} depth={0} dimmed onOpen={onOpen} onEdit={onEdit} onAddToPrompt={onAddToPrompt} />
+                <NodeRow key={i} node={p} depth={0} dimmed onOpen={onOpen} onEdit={onEdit} />
               ))}
             </div>
           )}
@@ -63,7 +62,6 @@ export const InspectModal: React.FC<Props> = ({ capture, onOpen, onEdit, onAddTo
               highlight
               onOpen={onOpen}
               onEdit={onEdit}
-              onAddToPrompt={onAddToPrompt}
             />
           </div>
 
@@ -80,7 +78,6 @@ export const InspectModal: React.FC<Props> = ({ capture, onOpen, onEdit, onAddTo
                 nodes={capture.clicked.children}
                 onOpen={onOpen}
                 onEdit={onEdit}
-                onAddToPrompt={onAddToPrompt}
               />
             </div>
           )}

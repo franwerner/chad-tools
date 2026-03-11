@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 
-export type ToolId = "monitor" | "editor" | "claude" | null;
+export type ToolId = "monitor" | "editor" | null;
 
 // Shift+Fn → tool mapping (centralised keyboard shortcuts)
 const HOTKEYS: Record<string, ToolId> = {
   F1: "monitor",
   F2: null,       // F2 reserved for inspect (handled separately)
   F3: "editor",
-  F4: "claude",
 };
 
 interface ActiveToolState {
@@ -20,9 +19,9 @@ interface ActiveToolState {
 
 const ActiveToolContext = createContext<ActiveToolState>({
   activeTool: null,
-  open: () => {},
-  close: () => {},
-  toggle: () => {},
+  open: () => { },
+  close: () => { },
+  toggle: () => { },
   isOpen: () => false,
 });
 

@@ -16,7 +16,6 @@ export const COLORS = {
   hover: "#21262d",
 };
 
-// Terminal / dark surface palette (used by Claude, Editor, shared panels)
 export const TERM = {
   bg: "#0d1117",
   surface: "#161b22",
@@ -24,7 +23,7 @@ export const TERM = {
 };
 
 // Tool accent colors
-export const CO = "#da7756";       // Claude / Anthropic orange
+export const CO = "#da7756";
 export const CO_DIM = "#da775640";
 export const CO_MED = "#da7756a0";
 export const IDE_COLOR = "#3fb950"; // Editor green
