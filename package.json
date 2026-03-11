@@ -1,12 +1,14 @@
 {
-  "name": "chad-tools",
-  "version": "0.1.1",
+  "name": "tooltify",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "build": "npm run build:client && npm run build:lib",
     "build:client": "npm run build -w core/client",
     "build:lib": "tsup",
-    "dev:client": "npm run dev -w core/client"
+    "dev:client": "npm run dev -w core/client",
+    "public": "npm publish --access public",
+    "publish": "npm run build && npm run public"
   },
   "keywords": [
     "devtools",
@@ -18,7 +20,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/franwerner/chad-tools"
+    "url": "https://github.com/franwerner/tooltify"
   },
   "exports": {
     "./core": {

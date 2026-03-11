@@ -1,5 +1,5 @@
 {
-  "name": "@chad-tools/playground",
+  "name": "@tooltify/playground",
   "private": true,
   "type": "module",
   "scripts": {
